@@ -133,4 +133,46 @@ public class UserDAO implements IUser {
         callableStatement.executeUpdate();
 
     }
+
+    @Override
+    public void addUserTransaction(User user, int[] permisions) throws SQLException, ClassNotFoundException {
+        Connection connection = null;
+        PreparedStatement preparedStatement1 = null;
+        PreparedStatement preparedStatement2 = null;
+        ResultSet resultSet = null;
+        connection = getConnection();
+        connection.setAutoCommit(false);
+
+        preparedStatement1 = connection.prepareStatement(INSERT_USER_SQL,Statement.RETURN_GENERATED_KEYS);
+        preparedStatement1.setString(1, user.getName());
+
+        preparedStatement1.setString(2, user.getEmail());
+
+        preparedStatement1.setString(3, user.getCountry());
+
+        int rowAffected = preparedStatement1.executeUpdate();
+        resultSet = preparedStatement1.getGeneratedKeys();
+        int userId = 0;
+        if(resultSet.next())
+            userId = resultSet.getInt(1);
+        if(rowAffected == 1) {
+            String sqlPivot = "INSERT INTO user_permision(user_id,permision_id) "
+
+                    + "VALUES(?,?)";
+
+            preparedStatement2 = connection.prepareStatement(sqlPivot);
+
+            for (int permisionId : permisions) {
+
+                preparedStatement2.setInt(1, userId);
+
+                preparedStatement2.setInt(2, permisionId);
+
+                preparedStatement2.executeUpdate();
+
+            }
+            connection.commit();
+        } else
+            connection.rollback();
+    }
 }

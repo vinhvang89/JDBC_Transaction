@@ -90,6 +90,17 @@ public class UserServlet  extends HttpServlet {
                     throwables.printStackTrace();
                 }
                 break;
+            case "permision":
+
+                try {
+                    addUserPermision(req, resp);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                break;
             default:
                 listUser(req,resp);
                 break;
@@ -119,5 +130,14 @@ public class UserServlet  extends HttpServlet {
         request.setAttribute("listUser",users);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("user/list.jsp");
         requestDispatcher.forward(request,response);
+    }
+    private void addUserPermision(HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException {
+
+        User user = new User("kien", "kienhoang@gmail.com", "vn");
+
+        int[] permision = {1, 2, 4};
+
+        userDAO.addUserTransaction(user, permision);
+
     }
 }
