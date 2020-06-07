@@ -28,7 +28,13 @@ public class UserServlet  extends HttpServlet {
             action = "";
         switch (action){
             case "create":
-                insertUser(req,resp);
+                try {
+                    insertUser(req,resp);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
             case "edit":
                 try {
@@ -39,12 +45,12 @@ public class UserServlet  extends HttpServlet {
                 break;
         }
     }
-    public void insertUser(HttpServletRequest req , HttpServletResponse resp) throws ServletException, IOException {
+    public void insertUser(HttpServletRequest req , HttpServletResponse resp) throws ServletException, IOException, SQLException, ClassNotFoundException {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String country = req.getParameter("country");
         User newUser = new User(name,email,country);
-        userDAO.insertUser(newUser);
+        userDAO.insertUserStore(newUser);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("user/create.jsp");
         requestDispatcher.forward(req,resp);
     }
@@ -55,7 +61,7 @@ public class UserServlet  extends HttpServlet {
         String country = req.getParameter("country");
         User fuck = new User(id,name,email,country);
         userDAO.updateUser(fuck);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("users/edit.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("user/edit.jsp");
         requestDispatcher.forward(req,resp);
     }
 
@@ -65,11 +71,17 @@ public class UserServlet  extends HttpServlet {
         if(action == null)
             action = "";
         switch (action){
-            case "creat":
+            case "create":
                 showNewForm(req,resp);
                 break;
             case "edit":
-                showEditForm(req,resp);
+                try {
+                    showEditForm(req,resp);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
             case "delete":
                 try {
@@ -87,9 +99,9 @@ public class UserServlet  extends HttpServlet {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("user/create.jsp");
             requestDispatcher.forward(request,response);
     }
-    public void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException {
         int id = Integer.parseInt(request.getParameter("id"));
-        User existingUser = userDAO.selectUser(id);
+        User existingUser = userDAO.getUserById(id);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("user/edit.jsp");
         request.setAttribute("user",existingUser);
         requestDispatcher.forward(request,response);
@@ -99,7 +111,7 @@ public class UserServlet  extends HttpServlet {
         userDAO.deleteUser(id);
         List<User> users  = userDAO.selectAllUsers();
         request.setAttribute("listUser",users);
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/users");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("user/list.jsp");
         requestDispatcher.forward(request,response);
     }
     public void listUser(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {

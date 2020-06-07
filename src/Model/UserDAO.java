@@ -104,4 +104,33 @@ public class UserDAO implements IUser {
         }
         return  rowUpdates;
     }
+
+    @Override
+    public User getUserById(int id) throws SQLException, ClassNotFoundException {
+        User user = null;
+        String select = "call get_user_by_id(?);";
+        Connection connection = getConnection();
+        CallableStatement callableStatement = connection.prepareCall(select);
+        callableStatement.setInt(1,id);
+        ResultSet resultSet = callableStatement.executeQuery();
+        while (resultSet.next()){
+            String name = resultSet.getString("name");
+            String email = resultSet.getString("email");
+            String country = resultSet.getString("country");
+            user = new User(id,name,email,country);
+        }
+        return user;
+    }
+
+    @Override
+    public void insertUserStore(User user) throws SQLException, ClassNotFoundException {
+        String insert = "call insert_user(?,?,?);";
+        Connection connection = getConnection();
+        CallableStatement callableStatement = connection.prepareCall(insert);
+        callableStatement.setString(1,user.getName());
+        callableStatement.setString(2,user.getEmail());
+        callableStatement.setString(3,user.getEmail());
+        callableStatement.executeUpdate();
+
+    }
 }

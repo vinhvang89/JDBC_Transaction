@@ -16,7 +16,7 @@
 <center>
     <h1>User Management</h1>
     <h2>
-        <a href="./users?action=create">ADD A NEW USER</a>
+        <a href="users?action=create">ADD A NEW USER</a>
     </h2>
 </center>
 <div align="center">
@@ -38,8 +38,8 @@
                 <td><c:out value="${user.email}"/></td>
                 <td><c:out value="${user.country}"/></td>
                 <td>
-                    <a href="/users?action=edit&id=${user.id}">Edit</a>
-                    <a href="/users?action=delete&id=${user.id}">Delete</a>
+                    <a href="users?action=edit&id=${user.id}">Edit</a>
+                    <a href="users?action=delete&id=${user.id}">Delete</a>
                 </td>
             </tr>
         </c:forEach>
